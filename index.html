@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="assets/images/favicon.png">
+<title>槐隐学园</title>
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<!-- ===== 桌面背景层 ===== -->
+<div id="desktop"></div>
+
+<!-- ===== IE6 浏览器窗口 ===== -->
+<div id="window">
+  <!-- 标题栏 -->
+  <div id="titlebar">
+    <div class="tb-left">
+      <img class="tb-favicon" src="assets/images/favicon.png" alt="">
+      <span id="tb-title">槐隐学园</span>
+    </div>
+    <div class="tb-btns">
+      <button class="tb-btn tb-min" type="button" title="最小化"><span></span></button>
+      <button class="tb-btn tb-max" type="button" title="最大化"><span></span></button>
+      <button class="tb-btn tb-close" type="button" title="关闭"><span>×</span></button>
+    </div>
+  </div>
+  <!-- 菜单栏 -->
+  <div id="menubar">
+    <span class="mb-item" data-m="file"><u>文</u>件(F)</span>
+    <span class="mb-item" data-m="edit"><u>编</u>辑(E)</span>
+    <span class="mb-item" data-m="view"><u>查</u>看(V)</span>
+    <span class="mb-item" data-m="fav"><u>收</u>藏(A)</span>
+    <span class="mb-item" data-m="tool"><u>工</u>具(T)</span>
+    <span class="mb-item" data-m="help"><u>帮</u>助(H)</span>
+  </div>
+  <!-- 工具栏 -->
+  <div id="toolbar">
+    <div class="tb-tool" id="nav-back" title="后退">
+      <span class="ico ico-back"></span><span class="tool-label">后退</span>
+    </div>
+    <div class="tb-tool tb-tool-disabled" id="nav-forward" title="前进">
+      <span class="ico ico-forward"></span><span class="tool-label">前进</span>
+    </div>
+    <div class="tb-sep"></div>
+    <div class="tb-tool" id="nav-refresh" title="刷新"><span class="ico ico-refresh"></span></div>
+    <div class="tb-tool" id="nav-home" title="主页"><span class="ico ico-home"></span></div>
+    <div class="tb-sep"></div>
+    <div class="addr-wrap">
+      <span class="addr-label">地址(D)</span>
+      <div class="addr-bar">
+        <span class="ico ico-globe"></span>
+        <span id="addr-url">about:blank</span>
+        <span class="addr-drop">▾</span>
+      </div>
+      <button class="go-btn" type="button">转到</button>
+    </div>
+  </div>
+  <!-- 页面加载条 -->
+  <div id="loadbar"><div id="loadbar-fill"></div><span id="loadbar-text">正在加载...</span></div>
+
+  <!-- 内容视口 -->
+  <div id="viewport">
+    <div id="page-mount"></div>
+  </div>
+
+  <!-- 状态栏 -->
+  <div id="statusbar">
+    <span id="status-msg">完毕</span>
+    <span class="status-right">
+      <span class="status-zone" id="status-zone">Internet</span>
+      <span class="status-zone" id="status-archive">离线归档</span>
+    </span>
+  </div>
+</div>
+
+<!-- ===== 模态框层 ===== -->
+<div id="modal-layer"></div>
+<!-- ===== 碎片弹窗层 ===== -->
+<div id="fragment-layer"></div>
+<!-- ===== 结局演出层 ===== -->
+<div id="ending-layer"></div>
+
+<!-- ===== CRT 效果层 ===== -->
+<div id="crt-scanlines"></div>
+<div id="crt-vignette"></div>
+<div id="crt-noise"></div>
+<div id="crt-flicker"></div>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/shell.js"></script>
+<script src="js/pages.js"></script>
+<script src="js/endings.js"></script>
+<script src="js/support.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
