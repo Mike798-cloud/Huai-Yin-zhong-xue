@@ -166,7 +166,7 @@ var HOME_NEWS = NEWS.slice(0,10);
 var RADIO_PROGRAMS = [
   {day:"周一", slots:[{t:"早 07:30", name:"新闻早班车", dur:"0:08", type:"news"},{t:"午 12:00", name:"流行音乐时间", dur:"0:20", type:"music"},{t:"晚 18:00", name:"美文欣赏", dur:"0:15", type:"read"}]},
   {day:"周二", slots:[{t:"早 07:30", name:"新闻早班车", dur:"0:08", type:"news"},{t:"午 12:00", name:"校园点歌台", dur:"0:20", type:"music"},{t:"晚 18:00", name:"英语角", dur:"0:15", type:"read"}]},
-  {day:"周三", slots:[{t:"早 07:30", name:"新闻早班车", dur:"0:08", type:"news"},{t:"午 12:00", name:"心灵驿站", dur:"0:30", type:"secret"},{t:"晚 18:00", name:"流行音乐时间", dur:"0:20", type:"music"}]},
+  {day:"周三", slots:[{t:"早 07:30", name:"新闻早班车", dur:"0:08", type:"news"},{t:"午 12:00", name:"心灵驿站", dur:"3:00", type:"secret"},{t:"晚 18:00", name:"流行音乐时间", dur:"0:20", type:"music"}]},
   {day:"周四", slots:[{t:"早 07:30", name:"新闻早班车", dur:"0:08", type:"news"},{t:"午 12:00", name:"校园点歌台", dur:"0:20", type:"music"},{t:"晚 18:00", name:"美文欣赏", dur:"0:15", type:"read"}]},
   {day:"周五", slots:[{t:"早 07:30", name:"新闻早班车", dur:"0:08", type:"news"},{t:"午 12:00", name:"校园点歌台", dur:"0:20", type:"music"},{t:"晚 18:00", name:"一周校园回顾", dur:"0:15", type:"news"}]}
 ];

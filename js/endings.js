@@ -18,7 +18,10 @@ var Endings = {
 
   /* ---------- 结局一：关闭窗口（遗忘） ---------- */
   forget:function(){
+    if(this.active)return;
+    if(window.ArchiveTools)ArchiveTools.beginPage();
     this.active = true;
+    if(window.ArchiveTools)ArchiveTools.clearCheckpoint();
     document.body.classList.add("on-ending");
     Game.finish("forget");
     Audio.stopProgram();
@@ -42,13 +45,16 @@ var Endings = {
       center.style.opacity = "1";
     }, 2600);
     setTimeout(function(){
-      this.credits("遗忘");
+      this.waitForContinue("遗忘");
     }.bind(this), 5200);
   },
 
   /* ---------- 结局二：重置数据（揭露） ---------- */
   reset:function(){
+    if(this.active)return;
+    if(window.ArchiveTools)ArchiveTools.beginPage();
     this.active = true;
+    if(window.ArchiveTools)ArchiveTools.clearCheckpoint();
     document.body.classList.add("on-ending");
     Game.finish("reset");
     Audio.stopProgram();
@@ -121,13 +127,16 @@ var Endings = {
       }
     }, 520);
     setTimeout(function(){
-      this.credits("揭露");
+      this.waitForContinue("揭露");
     }.bind(this), 17000);
   },
 
   /* ---------- 结局三：新增观测者（铭记） ---------- */
   observer:function(){
+    if(this.active)return;
+    if(window.ArchiveTools)ArchiveTools.beginPage();
     this.active = true;
+    if(window.ArchiveTools)ArchiveTools.clearCheckpoint();
     document.body.classList.add("on-ending");
     Game.finish("observer");
     Audio.stopProgram();
@@ -136,7 +145,7 @@ var Endings = {
     Game.flags.__observerPost = msg;
     /* 跳回留言板，自动发布新留言 */
     setTimeout(function(){
-      Shell.go("/board.html?post=remember");
+      Shell.go("/board.html?post=remember",{ending:true,fast:true});
     }, 100);
     var layer = this.el();
     setTimeout(function(){
@@ -163,14 +172,22 @@ var Endings = {
         }
       }, 900);
       setTimeout(function(){
-        this.credits(full ? "铭记于心" : "铭记");
+        this.waitForContinue(full ? "铭记于心" : "铭记");
       }.bind(this), full ? 10500 : 5500);
     }.bind(this), 1800);
   },
 
+  waitForContinue:function(name){
+    var layer=this.el(),b=document.createElement("button");b.type="button";b.className="ie-btn ending-continue";b.textContent="继续";
+    b.onclick=function(){Endings.credits(name);};layer.appendChild(b);
+  },
+
   /* ---------- 序章：返回列表（断开） ---------- */
   blackScreen:function(text, target){
+    if(this.active)return;
+    if(window.ArchiveTools)ArchiveTools.beginPage();
     this.active = true;
+    if(window.ArchiveTools)ArchiveTools.clearCheckpoint();
     document.body.classList.add("on-ending");
     var layer = this.el();
     layer.innerHTML =
@@ -235,7 +252,7 @@ var Endings = {
             '<div class="cr-cr-title">制作名单</div>'+
             '<div class="cr-cr-row"><span>策划 · 文字 · 网页</span><b>abc</b></div>'+
             '<div class="cr-cr-row"><span>美术 · 音效</span><b>abc（部分素材取自公共网络历史档案）</b></div>'+
-            '<div class="cr-cr-row"><span>特别感谢</span><b>所有在没有任何提示的情况下，还愿意继续点下去的人</b></div>'+
+            '<div class="cr-cr-row"><span>特别感谢</span><b>每一位愿意多翻一页、记住她名字的人</b></div>'+
           '</div>'+
           '<div class="cr-memorial">林晚，学号 063143，2007 年 9 月止。<br>—— 她在这里，有过名字。</div>'+
           '<div class="cr-support">如果你想请作者喝杯水，<a href="javascript:void(0)" id="crSupport">可以在这里支持一块钱</a>；不想也没关系，你已经把最重要的东西给了她。</div>'+
@@ -312,7 +329,7 @@ var Endings = {
     box.querySelector("#restartBtn").onclick = function(){
       Audio.click();
       Endings.clearLayer();
-      Archive.boot(true);
+      Archive.boot(Game.profile.completed);
     };
   }
 };

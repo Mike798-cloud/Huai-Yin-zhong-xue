@@ -44,7 +44,8 @@ var Audio = {
       src.start();
 
       /* 低语音频 */
-      this.whisperEl = new Audio("assets/audio/whisper.mp3");
+      this.whisperEl = document.createElement("audio");
+      this.whisperEl.src = "assets/audio/whisper.mp3";
       this.whisperEl.preload = "auto";
       this.whisperEl.volume = 0;
 
@@ -213,6 +214,7 @@ var Audio = {
     if(this.progNodes){
       this.progNodes.forEach(function(n){ try{ n.stop&&n.stop(); n.disconnect&&n.disconnect(); }catch(e){} });
     }
+    if(this.whisperEl){this.whisperEl.pause();this.whisperEl.currentTime=0;}
     this.programPlaying = false;
   },
   playProgram:function(type){
@@ -248,7 +250,7 @@ var Audio = {
       g.gain.setValueAtTime(0.012,t+0.8);
       g.gain.linearRampToValueAtTime(0.001,t+7);
       src.connect(bp); bp.connect(g); g.connect(this.master);
-      src.start(t+0.6); src.stop(t+7);
+      src.start(t+0.6); src.stop(t+7);nodes.push(src);
     } else if(type==="music"){
       /* 简单八音盒旋律 */
       var seq = [523,587,659,784,880,784,659,587];

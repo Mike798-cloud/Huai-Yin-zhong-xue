@@ -18,6 +18,8 @@ var Archive = {
   ],
 
   boot:function(ngplus){
+    if(window.ArchiveTools){ArchiveTools.clearCheckpoint();ArchiveTools.beginPage();}
+    Shell.closed=false;Shell.loading=false;document.getElementById("window").classList.remove("closed");
     if(ngplus){
       Game.newRun(true);
     } else {
@@ -68,6 +70,7 @@ var Archive = {
     document.getElementById("addr-url").textContent = Shell.urlFor("archive");
     document.getElementById("tb-title").textContent = "槐隐学园 - 公共网络历史归档";
     Game.applyCorruption();
+    ArchiveTools.addResumeButton();
     this.typeLines(ng);
   },
 
@@ -100,9 +103,9 @@ var Archive = {
         el.appendChild(cur);
       }
       i++;
-      setTimeout(step, 1100);
+      ArchiveTools.later(step, 1100);
     }
-    setTimeout(step, 500);
+    ArchiveTools.later(step, 500);
   },
 
   bindButtons:function(){
@@ -123,8 +126,8 @@ var Archive = {
       var box = document.querySelector(".archive-box");
       box.appendChild(bar);
       Audio.load();
-      setTimeout(function(){ document.getElementById("mirrorFill").style.width = "100%"; }, 60);
-      setTimeout(function(){
+      ArchiveTools.later(function(){ document.getElementById("mirrorFill").style.width = "100%"; }, 60);
+      ArchiveTools.later(function(){
         Shell.history.push({route:"/"});
         Shell.mountRoute(Shell.parseRoute("/"), {});
         if(window.Support) Support.arm();
@@ -157,6 +160,7 @@ window.addEventListener("DOMContentLoaded", function(){
   Shell.init();
   Pages.init();
   if(window.Support) Support.init();
+  ArchiveTools.init();
   Game.newRun(Game.profile.completed);
   Archive.render();
 });

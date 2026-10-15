@@ -52,6 +52,7 @@ var Game = {
         if(!this.profile.unlocked){ this.profile.unlocked = true; this.save(); }
       }
       this.applyCorruption();
+      if(window.ArchiveTools){ArchiveTools.checkpoint();ArchiveTools.refreshAccess();}
     }
   },
   has:function(f){ return !!this.flags[f]; },
@@ -71,6 +72,7 @@ var Game = {
     if(this.profile.fragments[i]) return false;
     this.profile.fragments[i] = true;
     this.save();
+    if(window.ArchiveTools)ArchiveTools.refreshAccess();
     return true;
   },
   fragmentCount:function(){
@@ -87,7 +89,7 @@ var Game = {
 
   /* 后台是否可进入 */
   specialVisible:function(){
-    return this.has("footerTree") || this.has("songClick");
+    return this.specialEnabled() || this.has("footerTree") || this.has("songClick") || this.has("recordFound") || this.has("classClue") || this.has("specialAttempt");
   },
   specialEnabled:function(){
     return !!this.profile.unlocked || (this.has("noteOverlay") && this.has("audioSecret"));

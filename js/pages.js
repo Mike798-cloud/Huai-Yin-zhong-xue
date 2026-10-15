@@ -27,6 +27,9 @@ var Pages = {
       case "/radio.html": return this.radio(rt);
       case "/student.html": return this.student(rt);
       case "/admin.html": return this.admin(rt);
+      case "/verify.html": return ArchiveTools.verify(rt);
+      case "/search.html": return ArchiveTools.searchPage(rt);
+      case "/recovery.html": return ArchiveTools.recovery(rt);
       case "/diary.html": return this.diaryPage(rt);
       case "/about-site.html": return this.aboutSite(rt);
       case "/sitemap.html": return this.sitemap(rt);
@@ -63,15 +66,9 @@ var Pages = {
     var hint = root.querySelector("#sideSearchHint");
     if(btn){
       var doSearch = function(){
-        var v = (input.value||"").replace(/^\s+|\s+$/g,"");
-        Audio.click();
-        if(v.indexOf("林晚")>=0){
-          Game.setFlag("searchLinWan");
-          hint.innerHTML = "没有相关结果。<br><span style='color:#dcdcdc;'>她坐最后一排。</span>";
-          Audio.error();
-        } else if(v){
-          hint.innerHTML = "没有找到与“"+v.replace(/</g,"")+"”相关的内容。";
-        }
+        var v=(input.value||"").trim();Audio.click();
+        if(v)Shell.go("/search.html?q="+encodeURIComponent(v));
+        else{hint.textContent="请输入新闻、文件或栏目中的关键词。";input.focus();}
       };
       btn.onclick = doSearch;
       input.onkeydown = function(e){ if(e.keyCode===13) doSearch(); };
@@ -613,7 +610,8 @@ var Pages = {
           '<span class="layer-top">'+LIN_WAN.noteTop+'</span>'+
           '<span class="layer-bottom">'+LIN_WAN.noteBottom+'</span>'+
         '</div>'+
-        '<div style="font-size:11px;color:#aaa;margin-top:4px;">（光标为文本选择样式，可拖动选中文字）</div>'+
+        '<button class="text-action" id="revealOriginal" type="button">查看覆盖前的备注</button>'+
+        '<div id="recordReceipt" class="record-receipt"></div>'+
       '</div></div>'+
     '</div>';
   },
@@ -621,7 +619,7 @@ var Pages = {
   /* ============ 管理后台 ============ */
   admin:function(rt){
     if(!Game.specialEnabled()){
-      return this.notFound("权限不足：您没有访问该页面的权限。");
+      return ArchiveTools.verify(rt);
     }
     Game.setFlag("inAdmin");
     Game.visit("admin");
@@ -752,7 +750,7 @@ var Pages = {
         slides.forEach(function(s,k){ s.classList.toggle("on",k===i); });
         dots.forEach(function(d,k){ d.classList.toggle("on",k===i); });
       };
-      timer = setInterval(function(){ if(slides.length) show((idx+1)%3); }, 4200);
+      timer = ArchiveTools.every(function(){ if(slides.length) show((idx+1)%3); }, 4200);
       dots.forEach(function(d){
         d.onclick = function(){ Audio.click(); show(parseInt(d.getAttribute("data-slide"),10)); };
       });
@@ -787,11 +785,11 @@ var Pages = {
             if(Game.ngplus){
               Audio.click();
               Shell.fragment(5);
-            } else {
+            } else if(!ArchiveTools.settings.reducedFlash){
               Audio.staticHit(0.05);
               var img = roof.parentElement.querySelector("img");
               img.style.filter = "sepia(1) hue-rotate(-30deg) saturate(3)";
-              setTimeout(function(){ img.style.filter=""; }, 90);
+              ArchiveTools.later(function(){ img.style.filter=""; }, 90);
             }
           }
         };
@@ -834,7 +832,7 @@ var Pages = {
             pop.style.left = (clip.offsetLeft+20)+"px";
             pop.style.top = (clip.offsetTop+20)+"px";
             clip.parentElement.appendChild(pop);
-            setTimeout(function(){ pop.remove(); }, 5200);
+            ArchiveTools.later(function(){ pop.remove(); }, 5200);
           };
         }
       }
@@ -894,7 +892,7 @@ var Pages = {
               Audio.staticHit(0.05);
               Shell.status("文件名异常：最后一排.xls");
               Shell.flash(a);
-              setTimeout(function(){ a.textContent = orig; }, 2200);
+              ArchiveTools.later(function(){ a.textContent = orig; }, 2200);
             } else {
               /* 非阻塞提示，保证连续点击可触发 */
               Audio.staticHit(0.03);
@@ -935,14 +933,10 @@ var Pages = {
       var bsBtn = root.querySelector("#boardSearchBtn");
       var bsInput = root.querySelector("#boardSearch");
       if(bsBtn){
-        var doBoardSearch = function(){
-          var v = (bsInput.value||"").trim();
-          if(v.indexOf("林晚")>=0){
-            Game.setFlag("searchLinWan");
-            Shell.go("/board.html?q="+encodeURIComponent("林晚"));
-          } else {
-            Shell.go("/board.html?page=1");
-          }
+        var doBoardSearch=function(){
+          var v=(bsInput.value||"").trim();
+          if(v.indexOf("林晚")>=0)Game.setFlag("searchLinWan");
+          Shell.go("/board.html"+(v?"?q="+encodeURIComponent(v):""));
         };
         bsBtn.onclick = doBoardSearch;
         bsInput.onkeydown = function(e){ if(e.keyCode===13) doBoardSearch(); };
@@ -967,7 +961,7 @@ var Pages = {
       /* 铭记结局：页面泛黄，定格新留言 */
       var rr = root.querySelector("#rememberRow");
       if(rr){
-        setTimeout(function(){
+        ArchiveTools.later(function(){
           document.getElementById("page-mount").classList.add("remember-sepia");
           rr.scrollIntoView({block:"center"});
           rr.classList.add("remember-glow");
@@ -1000,7 +994,7 @@ var Pages = {
           if(type!=="secret"){
             fill.style.transition = "width 7s linear";
             fill.style.width = "100%";
-            setTimeout(function(){ fill.style.transition=""; fill.style.width="0"; }, 7500);
+            ArchiveTools.later(function(){ fill.style.transition=""; fill.style.width="0"; }, 7500);
           } else {
             /* 心灵驿站：3分钟，点击进度条定位 */
             fill.style.width = "0%";
@@ -1099,7 +1093,7 @@ var Pages = {
       if(qNameI){
         qNameI.oninput = function(){
           if(qClassI) qClassI.value="全部";
-          if(qIdI) qIdI.value="全部";
+          if(qIdI) qIdI.value="";
         };
       }
       var exp = root.querySelector("#qExport");
@@ -1112,7 +1106,7 @@ var Pages = {
       var blank = root.querySelector("#blankRow");
       if(blank){
         if(Game.has("classClue")){
-          setTimeout(function(){
+          ArchiveTools.later(function(){
             var vp = document.getElementById("viewport");
             blank.scrollIntoView({block:"center"});
           }, 300);
@@ -1120,7 +1114,7 @@ var Pages = {
         blank.onclick = function(){
           Audio.click();
           Shell.openWindow("学籍管理系统 V2.1 - 档案详情", Pages.recordDetail(), 680);
-          setTimeout(function(){ Pages.bindRecordDetail(); }, 60);
+          ArchiveTools.later(function(){ Pages.bindRecordDetail(); }, 60);
         };
         /* 碎片4：右键学号单元格 */
         var idCell = root.querySelector("#blankIdCell");
@@ -1192,28 +1186,19 @@ var Pages = {
   },
 
   bindRecordDetail:function(){
-    var layer = Shell.modalLayer;
-    var note = layer.querySelector("#noteOverlay");
-    if(note){
-      note.onmouseup = function(){
-        var sel = window.getSelection();
-        var top = note.querySelector(".layer-top");
-        /* 拖动即触发（隐性暗示：光标为文本选择型） */
-        if(sel.toString().length>2 || true){
-          note.classList.add("revealed");
-          top.style.display = "none";
-          Game.setFlag("noteOverlay");
-        }
-      };
-      /* 点击即开始透出（降低门槛） */
-      note.onmousedown = function(){
-        setTimeout(function(){
-          note.classList.add("revealed");
-          note.querySelector(".layer-top").style.display = "none";
-          Game.setFlag("noteOverlay");
-        }, 250);
-      };
-    }
+    var note=Shell.modalLayer.querySelector("#noteOverlay");if(!note)return;
+    var reveal=function(){
+      note.classList.add("revealed");note.querySelector(".layer-top").style.display="none";
+      Game.setFlag("noteOverlay");
+      var b=Shell.modalLayer.querySelector("#revealOriginal");if(b){b.textContent="覆盖前备注已显示";b.disabled=true;}
+      var r=Shell.modalLayer.querySelector("#recordReceipt");
+      if(r){r.innerHTML='<p>原始备注与学号 063143 已对应，档案核验完成。</p>'+ArchiveTools.accessLinks();Shell.bindNav(r);}
+    };
+    note.onmouseup=reveal;
+    note.onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();reveal();}};
+    note.tabIndex=0;
+    var btn=Shell.modalLayer.querySelector("#revealOriginal");if(btn)btn.onclick=reveal;
+    if(Game.has("noteOverlay"))reveal();
   },
 
   /* ---------- 四阶乱码 ---------- */
@@ -1221,8 +1206,8 @@ var Pages = {
   _garble:function(){
     clearInterval(this._garbleTimer);
     var self = this;
-    this._garbleTimer = setInterval(function(){
-      if(Game.tier()<4) return;
+    this._garbleTimer = ArchiveTools.every(function(){
+      if(Game.tier()<4||ArchiveTools.settings.reducedFlash) return;
       var texts = document.querySelectorAll("#page-mount .data-table th, #page-mount .ad-head, #page-mount .int-title");
       if(!texts.length) return;
       var t = texts[Math.floor(Math.random()*texts.length)];
@@ -1233,7 +1218,7 @@ var Pages = {
       var arr = orig.split("");
       arr[pos] = chars[Math.floor(Math.random()*chars.length)];
       t.textContent = arr.join("");
-      setTimeout(function(){ t.textContent = orig; }, 350);
+      ArchiveTools.later(function(){ t.textContent = orig; }, 350);
     }, 1400);
   }
 };

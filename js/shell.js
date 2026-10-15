@@ -50,7 +50,7 @@ var Shell = {
           {t:"-",fn:null},
           {t:"源文件(C)",fn:function(){ Shell.viewSource(); }}],
     fav:[{t:"添加到收藏夹(A)…",fn:function(){ Shell.alert("Internet Explorer","收藏夹在离线归档中不可用。"); }}],
-    tool:[{t:"Internet 选项(O)…",fn:function(){ Shell.alert("Internet Explorer","该镜像的系统设置已被锁定。"); }}],
+    tool:[{t:"Internet 选项(O)…",fn:function(){ ArchiveTools.displaySettings(); }}],
     help:[{t:"关于 Internet Explorer(A)",fn:function(){ Shell.alert("Internet Explorer","Internet Explorer 6.0.2900\n\n槐隐学园离线镜像 #199709\n公共网络历史归档计划", {icon:""}); }}]
   },
   bindMenus:function(){
@@ -121,19 +121,16 @@ var Shell = {
 
   fit:function(){
     var w = window.innerWidth, h = window.innerHeight;
-    var scale = Math.min(w/1296, h/972);
+    if(w<1000){var compact=document.getElementById("window");compact.style.width=(w-8)+"px";compact.style.height=(h-8)+"px";compact.style.transform="translate(-50%,-50%)";return;}
+    var target=document.getElementById("window");
+    var full=target.dataset.maximized==="1";
+    target.style.width=(full?w-8:1280)+"px";target.style.height=(full?h-8:960)+"px";
+    var scale=full?1:Math.min(w/1296,h/972);
     var win = document.getElementById("window");
     win.style.transform = "translate(-50%,-50%) scale("+scale+")";
   },
   toggleSize:function(){
-    var win = document.getElementById("window");
-    if(win.style.width === "1280px" || !win.style.width){
-      win.style.width = window.innerWidth+"px";
-      win.style.height = window.innerHeight+"px";
-    } else {
-      win.style.width = "1280px"; win.style.height = "960px";
-    }
-    this.fit();
+    var win=document.getElementById("window");win.dataset.maximized=win.dataset.maximized==="1"?"0":"1";this.fit();
   },
 
   /* ---------- 路由 ---------- */
@@ -156,6 +153,7 @@ var Shell = {
 
   go:function(route, opts){
     opts = opts||{};
+    if(window.Endings&&Endings.active&&!opts.ending)return;
     if(!opts.silent) Audio.load();
     if(this.loading){ return; }
     var rt = this.parseRoute(route);
@@ -179,6 +177,7 @@ var Shell = {
   },
 
   back:function(){
+    if(this.loading||(window.Endings&&Endings.active))return;
     if(this.history.length<=1) return;
     var cur = this.history.pop();
     this.future.push(cur);
@@ -193,6 +192,7 @@ var Shell = {
     }, 350);
   },
   forward:function(){
+    if(this.loading||(window.Endings&&Endings.active))return;
     if(!this.future.length) return;
     var n = this.future.pop();
     this.history.push(n);
@@ -206,6 +206,7 @@ var Shell = {
     }, 350);
   },
   reload:function(){
+    if(this.loading||(window.Endings&&Endings.active))return;
     var cur = this.history[this.history.length-1];
     if(!cur) return;
     var rt = this.parseRoute(cur.route);
@@ -233,7 +234,12 @@ var Shell = {
   },
 
   mountRoute:function(rt, opts){
+    opts=opts||{};
+    if(window.ArchiveTools)ArchiveTools.beginPage();
+    document.onselectionchange=null;
+    Audio.stopProgram();
     var path = rt.path;
+    Game.currentRoute=path+(Object.keys(rt.q).length?"?"+this.serialize(rt.q):"");
     /* 导航到新页面时，关闭残留的弹窗/系统窗口（档案详情等），避免遮罩遮挡 */
     var ml = document.getElementById("modal-layer");
     if(ml && ml.classList.contains("show")){
@@ -255,15 +261,14 @@ var Shell = {
     document.body.classList.remove("on-archive","on-credits");
     if(window.Support) Support.notePage(path);
     document.getElementById("viewport").scrollTop = 0;
-    if(opts.back && this.scrollMem[this.urlFor(path)]){
-      /* 退回时恢复滚动 */
-    }
+    if(opts.back && this.scrollMem[Game.currentRoute]!=null)document.getElementById("viewport").scrollTop=this.scrollMem[Game.currentRoute];
     /* 页面挂载后执行交互绑定 */
     if(Pages.after){
       Pages.after(rt, this.mount);
     }
     Game.applyCorruption();
     this.updateChrome(path);
+    if(window.ArchiveTools){ArchiveTools.enhance(rt,this.mount);ArchiveTools.checkpoint();}
     Audio.loadDone();
     this.hideLoadbar();
     setTimeout(function(){
@@ -318,7 +323,7 @@ var Shell = {
       ["/radio.html","校园之声",""]
     ];
     var navHtml = navItems.map(function(it){
-      var isActive = (active && (it[0]==="/"+active || (it[0]==="/" && active==="index")));
+      var isActive = (active && (it[0]==="/"+active+".html" || (it[0]==="/" && active==="index")));
       return '<div class="nav-item'+(isActive?" active":"")+'" data-go="'+it[0]+'">'+it[1]+it[2]+'</div>';
     }).join("");
 
@@ -351,20 +356,20 @@ var Shell = {
     var self = this;
     root.querySelectorAll("[data-go]").forEach(function(el){
       el.onclick = function(e){
-        e.preventDefault();
+        e.preventDefault();e.stopPropagation();
         var href = el.getAttribute("data-go");
         Audio.click();
         if(href==="__SPECIAL__"){
           if(Game.specialEnabled()){ Shell.go("/admin.html"); }
           else {
-            Shell.alert("Internet Explorer", "无法访问该档案：权限不足。\n请先完成档案核验与音频核验。", {icon:"warn"});
+            Shell.go("/verify.html");
           }
           return;
         }
         Shell.go(href);
       };
     });
-    /* 页脚槐树三击 */
+    /* 页脚槐树三击（原有入口保留，同时提供可见替代入口） */
     var ft = root.querySelector("#footerTree");
     if(ft){
       var hits = 0, timer = null;
@@ -377,7 +382,7 @@ var Shell = {
           Game.setFlag("footerTree");
           Shell.status("特殊档案入口已出现");
           Shell.flash(ft);
-          Pages.after && Pages.after({path:Shell.currentPath()}, Shell.mount);
+          if(window.ArchiveTools)ArchiveTools.refreshAccess();
           hits=0;
         } else {
           timer = setTimeout(function(){ hits=0; }, 1200);
@@ -387,13 +392,14 @@ var Shell = {
     /* 特殊档案下拉 */
     var sp = root.querySelector("[data-special]");
     if(sp){
-      sp.onclick = function(){
+      sp.onclick = function(e){
+        e.preventDefault();e.stopPropagation();
         Audio.click();
         if(Game.specialEnabled()){
           Shell.go("/admin.html");
         } else {
           Game.setFlag("specialAttempt");
-          Shell.alert("Internet Explorer", "无法访问该档案：权限不足。\n（该页面需要两个以上的核验条件）", {icon:"warn"});
+          Shell.go("/verify.html");
         }
       };
     }
@@ -565,6 +571,7 @@ var Shell = {
     document.getElementById("status-msg").textContent = msg;
   },
   flash:function(el){
+    if(window.ArchiveTools&&ArchiveTools.settings.reducedFlash){el.classList.add("steady-cue");setTimeout(function(){el.classList.remove("steady-cue");},2200);return;}
     var n = 0;
     var t = setInterval(function(){
       el.style.opacity = (n%2) ? "1" : "0.2";
@@ -573,6 +580,7 @@ var Shell = {
     },120);
   },
   pageFlash:function(){
+    if(window.ArchiveTools&&ArchiveTools.settings.reducedFlash){Shell.status("归档内容发生变化。");return;}
     var vp = document.getElementById("viewport");
     vp.style.transition = "none";
     vp.style.background = "#f4f4f4";
