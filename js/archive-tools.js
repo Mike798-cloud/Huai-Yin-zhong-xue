@@ -165,8 +165,32 @@ var ArchiveTools={
   bindFragments:function(root){root.querySelectorAll('[data-fragment]').forEach(function(b){b.onclick=function(){if(Game.ngplus)Shell.fragment(+b.dataset.fragment);};});},
   recovery:function(){
     if(!Game.ngplus)return Shell.frame('<div class="article-box"><p>本次镜像尚未出现散页索引。散页属于重新查阅后的附加内容，不影响首次进入特殊档案。</p>'+this.link('/verify.html','查看当前核验进度')+'</div>','recovery');
-    var locations=[['首页 · 第三张轮播照片','照片右下角的纸角','/'],['幸福之星 · 第三页','表格下方的夹页','/star.html?page=3'],['留言板 · 审核未通过页','第一条留言旁的纸片','/board.html?page=4&hidden=1'],['学籍名册 · 高二(3)班','063143 单元格的批注','/student.html?cls='+encodeURIComponent('高二(3)班')+'&focus=063143'],['广播站 · 虫儿飞','点歌行夹页','/radio.html?song=cf'],['学校概况 · 实验楼','天台围栏旁的纸片','/about.html'],['关于本站','永久保存处的残页','/about-site.html']];
+    /* 每个索引都带定位参数，避免只打开原页却把玩家留在错误位置。 */
+    var locations=[
+      ['首页 · 第三张轮播照片','照片右下角的纸角','/?slide=2&focus=fragment1'],
+      ['幸福之星 · 第三页','表格下方的夹页','/star.html?page=3&focus=fragment2'],
+      ['留言板 · 审核未通过页','第一条留言旁的纸片','/board.html?page=4&hidden=1&focus=fragment3'],
+      ['学籍名册 · 高二(3)班','063143 单元格的批注','/student.html?cls='+encodeURIComponent('高二(3)班')+'&focus=063143'],
+      ['广播站 · 虫儿飞','点歌行夹页','/radio.html?song=cf&focus=song'],
+      ['学校概况 · 实验楼','天台围栏旁的纸片','/about.html?focus=roof'],
+      ['关于本站','永久保存处的残页','/about-site.html?focus=save']
+    ];
     return Shell.frame('<div class="article-box"><div class="page-title">镜像散页索引 · '+Game.fragmentCount()+'/7</div><p>这些是二周目保留下来的日记散页，首次进入后台不需要集齐它们。</p><table class="data-table"><tr><th>原页位置</th><th>可检查处</th><th>状态</th></tr>'+locations.map(function(x,i){return '<tr><td>'+ArchiveTools.link(x[2],x[0])+'</td><td>'+ArchiveTools.esc(x[1])+'</td><td>'+(Game.profile.fragments[i]?'已读':'未读')+'</td></tr>';}).join('')+'</table>'+this.accessLinks()+'</div>','recovery');
+  },
+  focusIndexTarget:function(rt,root){
+    var focus=rt&&rt.q&&rt.q.focus;
+    var selectors={fragment1:'#frag1Hot',fragment2:'#frag2Hot',fragment3:'#frag3Hot','063143':'#blankIdCell',song:'#songReceipt',roof:'#roofHot',save:'#saveForever'};
+    if(!focus||!selectors[focus])return;
+    var target=root.querySelector(selectors[focus]);
+    if(!target){Shell.status('已打开对应原页，但没有找到散页定位标记；可按页面说明继续查阅。');return;}
+    var highlight=target;
+    if(focus==='fragment1')highlight=target.closest('.slide')||target;
+    else if(focus==='fragment3')highlight=target.closest('td')||target;
+    else if(focus==='roof')highlight=target.closest('.g-frame')||target;
+    highlight.classList.add('archive-index-target');
+    this.later(function(){
+      if(document.documentElement.contains(highlight))highlight.scrollIntoView({block:'center',behavior:'auto'});
+    },120);
   },
   enhance:function(rt,root){
     var self=this;
@@ -198,14 +222,14 @@ var ArchiveTools={
     if(rt.path==='/radio.html')this.radio(rt,root);
     if(rt.path==='/admin.html'){
       root.querySelectorAll('.l-voice').forEach(function(row){var b=document.createElement('button');b.className='text-action';b.textContent='查看原始批注';row.appendChild(b);var open=function(e){e.stopPropagation();var body=root.querySelector('#voice'+row.dataset.voice);body.classList.toggle('open');b.textContent=body.classList.contains('open')?'收起原始批注':'查看原始批注';};b.onclick=open;row.ondblclick=open;});
-      var details=document.createElement('div');details.className='ad-links';details.innerHTML=self.link('/verify.html','返回核验记录')+'　'+self.link('/','返回学校首页')+(Game.ngplus?'　'+self.link('/recovery.html','散页索引（'+Game.fragmentCount()+'/7）'):'');root.querySelector('.ad-head').after(details);
-      if(Game.ngplus&&!Game.allFragments()){var hint=document.createElement('p');hint.className='ad-links';hint.innerHTML='查看完整日记需补齐散页；已有 '+Game.fragmentCount()+'/7 份。'+self.link('/recovery.html','查看散页原页位置');root.querySelector('.ad-btns').after(hint);}
+      var details=document.createElement('div');details.className='ad-links';details.innerHTML=self.link('/verify.html','返回核验记录')+'　'+self.link('/','返回学校首页')+(Game.ngplus?'　'+self.link('/recovery.html','散页索引（'+Game.fragmentCount()+'/7）'):'');root.querySelector('.ad-head').after(details);Shell.bindNav(details);
+      if(Game.ngplus&&!Game.allFragments()){var hint=document.createElement('p');hint.className='ad-links';hint.innerHTML='查看完整日记需补齐散页；已有 '+Game.fragmentCount()+'/7 份。'+self.link('/recovery.html','查看散页原页位置');root.querySelector('.ad-btns').after(hint);Shell.bindNav(hint);}
     }
     if(Game.ngplus){
       var fragments=[['#carousel',0,'查看照片右下角的纸角'],['#frag2Hot',1,'查看表格下方夹页'],['#frag3Hot',2,'查看留言旁的纸片'],['#roofHot',5,'查看实验楼围栏处的纸片'],['#saveForever',6,'查看永久保存处的残页']];
       fragments.forEach(function(f){var el=root.querySelector(f[0]);if(!el||f[1]===1&&rt.q.page!=='3')return;var b=document.createElement('button');b.className='text-action fragment-alternative';b.dataset.fragment=f[1];b.textContent=f[2];(f[1]===5?el.parentElement.parentElement:el).after(b);});
-      var footer=root.querySelector('.site-footer');if(footer){var l=document.createElement('p');l.innerHTML=self.link('/recovery.html','二周目散页索引（'+Game.fragmentCount()+'/7）');footer.appendChild(l);}
+      var footer=root.querySelector('.site-footer');if(footer){var l=document.createElement('p');l.innerHTML=self.link('/recovery.html','二周目散页索引（'+Game.fragmentCount()+'/7）');footer.appendChild(l);Shell.bindNav(l);}
     }
-    this.bindFragments(root);this.refreshAccess();this.applyDisplay();
+    this.bindFragments(root);this.refreshAccess();this.applyDisplay();this.focusIndexTarget(rt,root);
   }
 };

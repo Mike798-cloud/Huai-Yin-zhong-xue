@@ -750,7 +750,11 @@ var Pages = {
         slides.forEach(function(s,k){ s.classList.toggle("on",k===i); });
         dots.forEach(function(d,k){ d.classList.toggle("on",k===i); });
       };
-      timer = ArchiveTools.every(function(){ if(slides.length) show((idx+1)%3); }, 4200);
+      var requestedSlide = parseInt(rt.q.slide,10);
+      var pinnedSlide = rt.q.slide!==undefined && rt.q.slide!=="" && !isNaN(requestedSlide) && requestedSlide>=0 && requestedSlide<slides.length;
+      if(pinnedSlide)show(requestedSlide);
+      /* 从散页索引进入时固定目标轮播，避免自动轮播在玩家找到纸角前切走。 */
+      timer = ArchiveTools.every(function(){ if(slides.length && !pinnedSlide) show((idx+1)%slides.length); }, 4200);
       dots.forEach(function(d){
         d.onclick = function(){ Audio.click(); show(parseInt(d.getAttribute("data-slide"),10)); };
       });

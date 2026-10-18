@@ -140,13 +140,22 @@ var Shell = {
     return "http://"+SITE.domain+route;
   },
   parseRoute:function(hash){
-    /* hash 形如 /board.html?page=4 */
-    var path = hash.split("?")[0], qs = hash.split("?")[1]||"";
+    /* hash 形如 /board.html?page=4；畸形转义不应中断整页渲染 */
+    var raw = String(hash==null?"":hash);
+    var cut = raw.indexOf("?");
+    var path = (cut<0?raw:raw.slice(0,cut)).trim();
+    var qs = cut<0?"":raw.slice(cut+1);
     var q = {};
+    var decode = function(value){
+      value = String(value==null?"":value).replace(/\+/g," ");
+      try{return decodeURIComponent(value);}catch(e){return value;}
+    };
     qs.split("&").forEach(function(kv){
       if(!kv) return;
-      var p = kv.split("=");
-      q[decodeURIComponent(p[0])] = decodeURIComponent(p[1]||"");
+      var eq = kv.indexOf("=");
+      var key = decode(eq<0?kv:kv.slice(0,eq));
+      if(!key) return;
+      q[key] = decode(eq<0?"":kv.slice(eq+1));
     });
     return {path:path, q:q};
   },
@@ -154,8 +163,12 @@ var Shell = {
   go:function(route, opts){
     opts = opts||{};
     if(window.Endings&&Endings.active&&!opts.ending)return;
+    if(this.loading)return;
+    if(typeof route!=="string"||!route.trim()||!this.parseRoute(route).path){
+      this.alert("无法打开链接","该入口没有配置有效的站内地址。请返回索引页继续查阅。",{icon:"warn"});
+      return;
+    }
     if(!opts.silent) Audio.load();
-    if(this.loading){ return; }
     var rt = this.parseRoute(route);
     /* 记住滚动 */
     if(this.history.length){
@@ -351,27 +364,41 @@ var Shell = {
     '</div>';
   },
 
-  /* 点击代理：站点内所有 data-go */
+  /* 点击代理：站点内所有 data-go。采用事件委托，后插入的索引链接也会被接管。 */
   bindNav:function(root){
+    if(!root || !root.addEventListener) return;
     var self = this;
-    root.querySelectorAll("[data-go]").forEach(function(el){
-      el.onclick = function(e){
-        e.preventDefault();e.stopPropagation();
+    var hasBoundAncestor = false;
+    for(var parent=root.parentElement;parent;parent=parent.parentElement){
+      if(parent.__shellNavDelegate){hasBoundAncestor=true;break;}
+    }
+    if(!root.__shellNavDelegate && !hasBoundAncestor){
+      root.__shellNavDelegate = true;
+      root.addEventListener("click", function(e){
+        var node = e.target;
+        if(node && node.nodeType!==1) node = node.parentElement;
+        if(!node || !node.closest) return;
+        var el = node.closest("[data-go]");
+        if(!el || (root!==el && !root.contains(el))) return;
+        e.preventDefault();
+        e.stopPropagation();
         var href = el.getAttribute("data-go");
-        Audio.click();
-        if(href==="__SPECIAL__"){
-          if(Game.specialEnabled()){ Shell.go("/admin.html"); }
-          else {
-            Shell.go("/verify.html");
-          }
+        if(!href || !href.trim()){
+          self.go("");
           return;
         }
-        Shell.go(href);
-      };
-    });
+        Audio.click();
+        if(href==="__SPECIAL__"){
+          self.go(Game.specialEnabled()?"/admin.html":"/verify.html");
+          return;
+        }
+        self.go(href);
+      });
+    }
     /* 页脚槐树三击（原有入口保留，同时提供可见替代入口） */
-    var ft = root.querySelector("#footerTree");
-    if(ft){
+    var ft = root.querySelector ? root.querySelector("#footerTree") : null;
+    if(ft && !ft.__shellFooterTreeBound){
+      ft.__shellFooterTreeBound = true;
       var hits = 0, timer = null;
       ft.style.cursor = "default";
       ft.onclick = function(){
@@ -390,8 +417,9 @@ var Shell = {
       };
     }
     /* 特殊档案下拉 */
-    var sp = root.querySelector("[data-special]");
-    if(sp){
+    var sp = root.querySelector ? root.querySelector("[data-special]") : null;
+    if(sp && !sp.__shellSpecialBound){
+      sp.__shellSpecialBound = true;
       sp.onclick = function(e){
         e.preventDefault();e.stopPropagation();
         Audio.click();

@@ -11,6 +11,7 @@
 .text-action:focus-visible,a:focus-visible,[role=button]:focus-visible{outline:2px solid #ae7824;outline-offset:3px;}
 .text-action:disabled{color:#67717c;border-bottom:0;cursor:default;}
 .steady-cue{outline:2px solid #ae7824!important;outline-offset:2px;}
+.archive-index-target{outline:2px solid #ae7824!important;outline-offset:3px;box-shadow:0 0 0 3px rgba(174,120,36,.16);scroll-margin:24px;}
 .verification{line-height:1.9;margin:12px 16px;}.verification-list{margin:16px 0;padding-left:25px;}.verification-list li{padding:12px 0;border-bottom:1px solid #d1d6dd;}
 .verification-list h3{font-size:15px;}.check-state{font-size:12px;font-weight:normal;color:#636c75;margin-left:8px;}
 .search-summary{padding:12px 0;border-bottom:1px solid #bec8d3;color:#505c6b;}.search-result{border-bottom:1px dotted #bdc5cd;padding:14px 0;line-height:1.9;}.search-result p{margin:5px 0;color:#5a6067;font-size:13px;}
