@@ -39,6 +39,7 @@ var Shell = {
     /* 窗口自适应缩放 */
     this.fit();
     window.addEventListener("resize", function(){ Shell.fit(); });
+    window.addEventListener("orientationchange", function(){ Shell.fit(); });
   },
 
   /* ---------- 顶部菜单 / 右键菜单 ---------- */
@@ -120,14 +121,29 @@ var Shell = {
   },
 
   fit:function(){
-    var w = window.innerWidth, h = window.innerHeight;
-    if(w<1000){var compact=document.getElementById("window");compact.style.width=(w-8)+"px";compact.style.height=(h-8)+"px";compact.style.transform="translate(-50%,-50%)";return;}
-    var target=document.getElementById("window");
-    var full=target.dataset.maximized==="1";
-    target.style.width=(full?w-8:1280)+"px";target.style.height=(full?h-8:960)+"px";
-    var scale=full?1:Math.min(w/1296,h/972);
+    var w = Math.max(240, window.innerWidth || document.documentElement.clientWidth || 320);
+    var h = Math.max(240, window.innerHeight || document.documentElement.clientHeight || 480);
     var win = document.getElementById("window");
-    win.style.transform = "translate(-50%,-50%) scale("+scale+")";
+    if(!win)return;
+    var full = win.dataset.maximized === "1";
+    /*
+      不再把 1280×960 的整个界面缩小到屏幕高度内。
+      旧逻辑在 1366×768 等常见笔记本分辨率下会把所有文字一起缩到约 79%，
+      导致玩家即使使用电脑也难以阅读。现在只调整窗口实际宽高，
+      页面内容由 CSS 自适应并在视口内滚动，文字保持真实像素尺寸。
+    */
+    var availableW = Math.max(240, w - (full ? 8 : 16));
+    var availableH = Math.max(240, h - (full ? 8 : 16));
+    var width = full ? availableW : Math.min(1280, availableW);
+    var height = full ? availableH : Math.min(960, availableH);
+    win.style.width = width + "px";
+    win.style.height = height + "px";
+    win.style.transform = "translate(-50%,-50%)";
+    var viewport = document.getElementById("viewport");
+    var archivePage = document.querySelector("#page-mount .p-archive");
+    if(viewport && archivePage){
+      archivePage.style.minHeight = viewport.clientHeight + "px";
+    }
   },
   toggleSize:function(){
     var win=document.getElementById("window");win.dataset.maximized=win.dataset.maximized==="1"?"0":"1";this.fit();

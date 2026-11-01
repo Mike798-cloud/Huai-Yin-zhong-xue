@@ -1,0 +1,980 @@
+/* ============================================================
+   槐隐学园 · 多设备可读性补强
+   不改剧情、线索、图片与交互，仅统一文字可读性和小屏操作尺寸。
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-size: 16px;
+}
+
+/* 桌面正文基准：不再让 12–13px 成为主要阅读字号。 */
+#page-mount {
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+#page-mount .archive-head,
+#page-mount .site-footer,
+#page-mount .crumb,
+#page-mount .side-box .sb-body,
+#page-mount .h-news li,
+#page-mount .h-notice li,
+#page-mount .h-stars table,
+#page-mount .data-table,
+#page-mount .board-table th,
+#page-mount .board-table td,
+#page-mount .prog-table th,
+#page-mount .prog-table td,
+#page-mount .dedication td,
+#page-mount .int-table th,
+#page-mount .int-table td,
+#page-mount .record-detail .rd-k,
+#page-mount .record-detail .rd-v,
+#page-mount .archive-document,
+#page-mount .verification,
+#page-mount .record-receipt,
+#page-mount .search-result,
+#page-mount .radio-inspection,
+#page-mount .display-settings {
+  font-size: 15px;
+}
+
+#page-mount .archive-body,
+#page-mount .article-box,
+#page-mount .diary-text,
+#page-mount .scratch-pop,
+#page-mount .needle-paper,
+#page-mount .fragment-alternative {
+  font-size: 16px;
+  line-height: 1.95;
+}
+
+#page-mount .article-box h2,
+#page-mount .page-title,
+#page-mount .radio-header h2 {
+  font-size: 21px;
+}
+
+#page-mount .site-name {
+  font-size: 28px;
+}
+
+#page-mount .site-sub,
+#page-mount .nav-item,
+#page-mount .side-box h3,
+#page-mount .h-news h3,
+#page-mount .h-notice h3,
+#page-mount .h-stars h3,
+#page-mount .dedication h3,
+#page-mount .int-title,
+#page-mount .section-h {
+  font-size: 16px;
+}
+
+#page-mount .board-cats .cat,
+#page-mount .del-btn,
+#page-mount .status-tag,
+#page-mount .play-btn,
+#page-mount .search-box button,
+#page-mount .log-fold .log-head,
+#page-mount .ad-rank .r-row {
+  font-size: 14px;
+}
+
+#page-mount .file-row,
+#page-mount .int-left label,
+#page-mount .radio-inspection h3,
+#page-mount .board-row .avatar,
+#page-mount .ad-col h3,
+#page-mount .ad-head {
+  font-size: 15px;
+}
+
+#page-mount .nav-dropdown .dd-item,
+#page-mount .h-news h3 a,
+#page-mount .h-stars h3 a,
+#page-mount .h-carousel .cap,
+#page-mount .h-quick .q-btn,
+#page-mount .pager .pg,
+#page-mount .ie-btn,
+#page-mount .text-action,
+#page-mount .ad-btn {
+  font-size: 14px;
+}
+
+#page-mount .article-box .meta,
+#page-mount .archive-tiny,
+#page-mount .gallery .g-cap,
+#page-mount .teacher-note,
+#page-mount .news-list .nl-row .nl-date,
+#page-mount .h-news li .n-date,
+#page-mount .board-row .time,
+#page-mount .board-row .admin-tag,
+#page-mount .board-search-hint,
+#page-mount .board-online,
+#page-mount .dl-link,
+#page-mount .intranet .int-head .v,
+#page-mount .int-note,
+#page-mount .log-fold .log-body,
+#page-mount .ad-rank .r-st,
+#page-mount .ad-logs,
+#page-mount .ad-logs .l-voice-body,
+#page-mount .ad-note,
+#page-mount .archive-small,
+#page-mount .archive-access,
+#page-mount .table-note,
+#page-mount .ad-links,
+#page-mount .radio-inspection label,
+#page-mount .archive-next p,
+#page-mount .archive-next > a,
+#page-mount .check-state,
+#page-mount .search-summary,
+#page-mount .search-result p {
+  font-size: 14px;
+}
+
+#page-mount input,
+#page-mount select,
+#page-mount textarea {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.ie-btn {
+  min-height: 34px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.fragment-note .frag-count,
+.hy-paywall-eyebrow,
+.cr-eyebrow {
+  font-size: 12px;
+}
+
+/* JS 生成的少量行内小字也设定可读下限，不改大标题的原有层级。 */
+#page-mount [style*="font-size:11px"],
+#page-mount [style*="font-size: 11px"],
+#page-mount [style*="font-size:12px"],
+#page-mount [style*="font-size: 12px"],
+#page-mount [style*="font-size:13px"],
+#page-mount [style*="font-size: 13px"] {
+  font-size: 14px !important;
+}
+
+#page-mount button,
+#page-mount .text-action,
+#page-mount .ie-btn {
+  line-height: 1.5;
+}
+
+/* 浏览器外壳、系统窗口和演出文本也同步放大，避免只有正文变大。 */
+.tb-left,
+#menubar,
+.mb-item,
+.tb-tool,
+.addr-label,
+.addr-bar,
+.go-btn,
+#loadbar,
+#statusbar,
+.ie-pop,
+.ie-pop-item,
+.xp-modal-title,
+.sys-modal-title,
+.xp-modal-text,
+.xp-btn,
+.notepad-title,
+.notepad-menu,
+.fragment-note,
+.ending-stream,
+.ending-restart .sub,
+.hy-support-chip,
+.hy-paywall-head p,
+.hy-paywall-copy,
+.hy-paywall-qr figcaption,
+.hy-paywall-foot button,
+.hy-support-toast,
+.cr-lead,
+.cr-body,
+.cr-credits,
+.cr-memorial {
+  font-size: 14px;
+}
+
+.notepad-body {
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.hy-support-chip .hy-yen {
+  font-size: 14px;
+}
+
+.ending-center [style*="font-size:12px"],
+.ending-center [style*="font-size: 12px"],
+.ending-center [style*="font-size:13px"],
+.ending-center [style*="font-size: 13px"],
+.ending-restart [style*="font-size:12px"],
+.ending-restart [style*="font-size: 12px"] {
+  font-size: 14px !important;
+}
+
+.xp-modal-text {
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.fragment-note {
+  font-size: 18px;
+  line-height: 1.85;
+}
+
+.hy-paywall-copy {
+  font-size: 15px;
+}
+
+.cr-body,
+.cr-credits,
+.cr-memorial {
+  font-size: 15px;
+}
+
+.cr-cr-row span,
+.cr-cr-row b {
+  font-size: 14px;
+}
+
+.cr-support,
+.cr-tail,
+.cr-endtag {
+  font-size: 13px;
+}
+
+/* 窗口高度不够时，保持真实字号，让正文在内容视口内滚动。 */
+#viewport {
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+#page-mount .site-main,
+#page-mount .site-side,
+#page-mount .article-box,
+#page-mount .record-detail {
+  min-width: 0;
+}
+
+#page-mount .record-detail,
+.sys-modal .record-detail {
+  width: 100%;
+}
+
+.sys-modal {
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+}
+
+.sys-modal-body {
+  min-width: 0;
+}
+
+.xp-modal {
+  width: min(420px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+}
+
+/* 中等屏幕：平板竖屏、窄窗口笔记本。 */
+@media (min-width: 681px) and (max-width: 999px) {
+  #page-mount {
+    font-size: 16px;
+  }
+
+  #page-mount .article-box {
+    padding: 18px 16px;
+    font-size: 16px;
+  }
+
+  #page-mount .site-body {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  #page-mount .site-side {
+    width: 200px;
+    flex-basis: 200px;
+  }
+
+  #page-mount .site-footer,
+  #page-mount .crumb,
+  #page-mount .side-box .sb-body {
+    font-size: 15px;
+  }
+
+  #page-mount .data-table,
+  #page-mount .board-table th,
+  #page-mount .board-table td,
+  #page-mount .prog-table th,
+  #page-mount .prog-table td,
+  #page-mount .int-table th,
+  #page-mount .int-table td {
+    font-size: 14px;
+  }
+
+  #toolbar {
+    min-width: 0;
+    gap: 2px;
+  }
+
+  .tb-tool {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .addr-wrap,
+  .addr-bar {
+    min-width: 0;
+  }
+
+  .addr-label {
+    display: none;
+  }
+
+  .addr-bar #addr-url {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* 手机和平板窄屏：正文至少 16px，次要信息不低于 14px。 */
+@media (max-width: 680px) {
+  #titlebar {
+    height: 34px;
+    flex-basis: 34px;
+  }
+
+  .tb-left {
+    font-size: 14px;
+  }
+
+  .tb-btn {
+    width: 32px;
+    height: 30px;
+  }
+
+  #menubar {
+    height: auto;
+    min-height: 34px;
+    flex-basis: auto;
+    gap: 1px;
+    padding: 2px 4px;
+    font-size: 14px;
+    flex-wrap: nowrap;
+  }
+
+  .mb-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 4px 6px;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  #toolbar {
+    height: auto;
+    min-height: 46px;
+    flex-basis: auto;
+    padding: 4px 5px;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+
+  .tb-tool {
+    min-width: 36px;
+    min-height: 36px;
+    justify-content: center;
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .addr-wrap {
+    min-width: 90px;
+  }
+
+  .addr-bar {
+    height: 34px;
+    min-height: 34px;
+    padding: 0 6px;
+    font-size: 14px;
+  }
+
+  .addr-bar #addr-url {
+    font-size: 13px;
+  }
+
+  #loadbar {
+    min-height: 24px;
+    height: 24px;
+    flex-basis: 24px;
+    font-size: 14px;
+  }
+
+  #statusbar {
+    min-height: 28px;
+    height: 28px;
+    flex-basis: 28px;
+    font-size: 13px;
+  }
+
+  #status-msg,
+  .status-zone {
+    height: 22px;
+    padding: 2px 5px;
+  }
+
+  .status-zone {
+    white-space: nowrap;
+  }
+
+  #page-mount {
+    font-size: 16px;
+    line-height: 1.9;
+  }
+
+  #page-mount .site-top {
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  #page-mount .site-name {
+    font-size: 23px;
+    letter-spacing: 4px;
+  }
+
+  #page-mount .site-sub {
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  #page-mount .site-nav {
+    padding: 0 4px;
+  }
+
+  #page-mount .nav-item {
+    padding: 10px 11px;
+    font-size: 15px;
+  }
+
+  #page-mount .nav-dropdown .dd-item {
+    padding: 9px 12px;
+    font-size: 14px;
+  }
+
+  #page-mount .site-body {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  #page-mount .site-main {
+    width: 100%;
+  }
+
+  #page-mount .site-side {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  #page-mount .article-box {
+    padding: 16px 14px;
+    font-size: 16px;
+    line-height: 2;
+    overflow-x: auto;
+  }
+
+  #page-mount .article-box h2 {
+    font-size: 20px;
+    line-height: 1.55;
+  }
+
+  #page-mount .article-box .meta {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  #page-mount .page-title {
+    padding: 12px 4px 14px;
+    font-size: 20px;
+    line-height: 1.5;
+    letter-spacing: 2px;
+  }
+
+  #page-mount .crumb {
+    padding: 10px 12px 0;
+    font-size: 14px;
+  }
+
+  #page-mount .side-box h3,
+  #page-mount .h-news h3,
+  #page-mount .h-notice h3,
+  #page-mount .h-stars h3,
+  #page-mount .dedication h3 {
+    font-size: 16px;
+    padding: 8px 12px;
+  }
+
+  #page-mount .side-box .sb-body,
+  #page-mount .h-news li,
+  #page-mount .h-notice li,
+  #page-mount .h-stars table,
+  #page-mount .data-table,
+  #page-mount .board-table th,
+  #page-mount .board-table td,
+  #page-mount .prog-table th,
+  #page-mount .prog-table td,
+  #page-mount .int-table th,
+  #page-mount .int-table td,
+  #page-mount .dedication td,
+  #page-mount .record-detail .rd-k,
+  #page-mount .record-detail .rd-v,
+  #page-mount .archive-document,
+  #page-mount .verification,
+  #page-mount .record-receipt,
+  #page-mount .search-result,
+  #page-mount .display-settings {
+    font-size: 15px;
+  }
+
+  #page-mount .article-box p,
+  #page-mount .archive-body,
+  #page-mount .diary-text,
+  #page-mount .scratch-pop {
+    font-size: 16px;
+  }
+
+  #page-mount .article-box .meta,
+  #page-mount .archive-tiny,
+  #page-mount .gallery .g-cap,
+  #page-mount .teacher-note,
+  #page-mount .news-list .nl-row .nl-date,
+  #page-mount .h-news li .n-date,
+  #page-mount .board-row .time,
+  #page-mount .board-row .admin-tag,
+  #page-mount .board-search-hint,
+  #page-mount .board-online,
+  #page-mount .dl-link,
+  #page-mount .intranet .int-head .v,
+  #page-mount .int-note,
+  #page-mount .log-fold .log-body,
+  #page-mount .ad-rank .r-st,
+  #page-mount .ad-logs,
+  #page-mount .ad-note,
+  #page-mount .archive-small,
+  #page-mount .archive-access,
+  #page-mount .archive-next p,
+  #page-mount .archive-next > a,
+  #page-mount .check-state,
+  #page-mount .search-summary,
+  #page-mount .search-result p {
+    font-size: 14px;
+  }
+
+  #page-mount input,
+  #page-mount select,
+  #page-mount textarea {
+    max-width: 100%;
+    min-height: 40px;
+    padding: 7px 9px;
+    font-size: 16px;
+  }
+
+  #page-mount button,
+  #page-mount .ie-btn,
+  #page-mount .pager .pg,
+  #page-mount .text-action,
+  #page-mount .h-quick .q-btn,
+  #archiveDisplay {
+    min-height: 40px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    font-size: 15px;
+  }
+
+  #page-mount .h-carousel {
+    height: clamp(190px, 55vw, 250px);
+  }
+
+  #page-mount .h-carousel .cap {
+    padding: 8px 10px;
+    font-size: 15px;
+  }
+
+  #page-mount .h-carousel .dot {
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+  }
+
+  #page-mount .h-quick {
+    gap: 8px;
+  }
+
+  #page-mount .gallery {
+    gap: 12px;
+  }
+
+  #page-mount .gallery .g-item {
+    width: calc(50% - 6px);
+  }
+
+  #page-mount .gallery .g-frame {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  #page-mount .archive-box,
+  #page-mount .diary-book,
+  #page-mount .archive-disconnected {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #page-mount .archive-body {
+    padding: 24px 18px 18px;
+    line-height: 1.85;
+  }
+
+  #page-mount .archive-foot {
+    padding: 14px 18px 22px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  #page-mount .diary-book {
+    padding: 24px 18px;
+  }
+
+  #page-mount .diary-book h2 {
+    font-size: 22px;
+  }
+
+  #page-mount .diary-text {
+    line-height: 1.9;
+  }
+
+  #page-mount .news-list .nl-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 3px 8px;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  #page-mount .news-list .nl-row .nl-date {
+    width: auto;
+    flex-basis: 100%;
+  }
+
+  #page-mount .record-detail {
+    width: 100%;
+  }
+
+  #page-mount .record-detail .rd-k {
+    width: 86px;
+    flex-basis: 86px;
+    padding: 9px 7px;
+  }
+
+  #page-mount .record-detail .rd-v {
+    padding: 9px 8px;
+    overflow-wrap: anywhere;
+  }
+
+  #page-mount .board-table,
+  #page-mount .prog-table {
+    min-width: 540px;
+  }
+
+  #page-mount .data-table,
+  #page-mount .int-table {
+    min-width: 100%;
+  }
+
+  #page-mount .int-right {
+    padding: 12px 8px;
+    overflow-x: auto;
+  }
+
+  #page-mount .int-left {
+    padding: 12px;
+  }
+
+  #page-mount .ad-logs .l-row {
+    flex-wrap: wrap;
+  }
+
+  #page-mount .ad-logs .l-row .l-t {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  #page-mount .ad-logs .l-voice-body {
+    padding-left: 12px;
+  }
+
+  #page-mount .ad-logs .l-voice-body.open {
+    padding-left: 12px;
+  }
+
+  .xp-modal {
+    top: 50%;
+  }
+
+  .xp-modal-title,
+  .sys-modal-title {
+    min-height: 32px;
+    height: auto;
+    font-size: 14px;
+  }
+
+  .xp-modal-title .m-close,
+  .sys-modal-title .m-close {
+    width: 28px;
+    height: 28px;
+    line-height: 25px;
+    font-size: 16px;
+  }
+
+  .xp-modal-body,
+  .sys-modal-body {
+    padding: 16px 14px;
+  }
+
+  .xp-modal-text {
+    font-size: 15px;
+  }
+
+  .xp-btn {
+    min-height: 38px;
+    font-size: 14px;
+  }
+
+  .sys-modal {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+  }
+
+  .fragment-note {
+    width: calc(100vw - 28px);
+    max-width: calc(100vw - 28px);
+    max-height: calc(100dvh - 36px);
+    overflow: auto;
+    padding: 24px 20px 20px;
+    font-size: 18px;
+    line-height: 1.85;
+  }
+
+  .fragment-note .frag-date {
+    font-size: 14px;
+  }
+
+  .ending-stream {
+    padding: 24px 18px;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .ending-center {
+    padding: 18px;
+  }
+
+  .ending-center > div[style*="font-size"] {
+    max-width: 100%;
+    line-height: 1.8;
+    text-align: center;
+  }
+
+  .ending-restart {
+    left: 18px;
+    right: 18px;
+    bottom: 22px;
+    transform: none;
+    align-items: stretch;
+  }
+
+  .ending-restart > div {
+    font-size: 14px !important;
+    white-space: normal !important;
+  }
+
+  .ending-restart .ie-btn {
+    min-height: 42px;
+  }
+
+  .notepad {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    height: min(520px, calc(100dvh - 24px));
+    max-height: calc(100dvh - 24px);
+  }
+
+  .notepad-title,
+  .notepad-menu {
+    font-size: 14px;
+  }
+
+  .notepad-body {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .hy-paywall-inner {
+    padding: 22px 16px 18px;
+  }
+
+  .hy-paywall-copy {
+    font-size: 15px;
+    line-height: 1.9;
+  }
+
+  .hy-paywall-head h2 {
+    font-size: 20px;
+  }
+
+  .hy-paywall-head p,
+  .hy-paywall-qr figcaption,
+  .hy-paywall-foot button {
+    font-size: 14px;
+  }
+
+  .hy-paywall-foot button {
+    min-height: 42px;
+  }
+
+  .cr-scroll {
+    padding: 24px 12px 40px;
+  }
+
+  .cr-paper {
+    padding: 26px 20px 22px;
+  }
+
+  .cr-title {
+    font-size: 24px;
+    letter-spacing: 3px;
+  }
+
+  .cr-lead,
+  .cr-body,
+  .cr-credits,
+  .cr-memorial {
+    font-size: 15px;
+  }
+
+  .cr-cr-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cr-cr-row span,
+  .cr-cr-row b {
+    flex: none;
+    font-size: 14px;
+  }
+
+  .cr-support,
+  .cr-tail,
+  .cr-endtag {
+    font-size: 13px;
+  }
+
+  .hy-support-chip {
+    min-height: 38px;
+    padding: 7px 10px;
+    font-size: 13px;
+  }
+}
+
+/* 极窄手机：不压缩正文字号，只收紧装饰间距。 */
+@media (max-width: 380px) {
+  #page-mount .site-name {
+    font-size: 21px;
+    letter-spacing: 3px;
+  }
+
+  #page-mount .site-crest {
+    width: 32px;
+    height: 44px;
+  }
+
+  #page-mount .nav-item {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .mb-item {
+    padding-left: 4px;
+    padding-right: 4px;
+    font-size: 12px;
+  }
+
+  #page-mount .site-body {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  #page-mount .article-box {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* 手机横屏、低高度窗口：控件不遮挡内容，正文仍可滚动。 */
+@media (max-height: 520px) and (max-width: 900px) {
+  #titlebar {
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  #menubar {
+    min-height: 30px;
+  }
+
+  #toolbar {
+    min-height: 40px;
+  }
+
+  #loadbar {
+    min-height: 21px;
+    height: 21px;
+    flex-basis: 21px;
+  }
+
+  #statusbar {
+    min-height: 25px;
+    height: 25px;
+    flex-basis: 25px;
+  }
+}
+
+/* 尊重系统的文字放大偏好；不对页面做 transform 缩小。 */
+@media (prefers-contrast: more) {
+  #page-mount .archive-small,
+  #page-mount .archive-access,
+  #page-mount .crumb,
+  #page-mount .article-box .meta {
+    color: #444;
+  }
+}
